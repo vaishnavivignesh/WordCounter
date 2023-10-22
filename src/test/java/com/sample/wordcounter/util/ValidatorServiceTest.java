@@ -62,22 +62,11 @@ public class ValidatorServiceTest {
 		assertEquals(result.size(), 2);
 	}
 
+
 	private Word buildWordObject(String value) {
 
-		if (value.equalsIgnoreCase(success)) {
-			return new Word("Edinburgh Cambridge", Arrays.asList("London", "Glasgow"));
-		}
-
-		else if (value.equalsIgnoreCase(partialSuccessList)) {
-			return new Word("Edinburgh Cambridge", Arrays.asList("Lon1don", "Glas2gow"));
-		} else if (value.equalsIgnoreCase(partialSuccessValue)) {
-			return new Word("Edinb1urgh Camb2ridge", Arrays.asList("Lon1don", "Glas2gow"));
-		}
-
-		else if (value.equalsIgnoreCase(failure)) {
-			return new Word("Edinbu1rgh Cambr2idge", Arrays.asList("Lon1don", "Glas2gow"));
-		}
-		return null;
+		Word word = new Word(null, Arrays.asList("Edinburgh", "Cambridge", "London", "Glasgow"));
+		return word;
 	}
 
 }
