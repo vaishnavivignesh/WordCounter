@@ -24,15 +24,16 @@ public class WordCounterServiceImpl implements WordCounterService {
 
 	@Override
 	public String addWord(Word word) {
-
+        
 		List<String> validValues = validationService.validateInput(word);
 
 		if (validValues == null || validValues.size() < 1)
 			return Constants.failure;
+		/* Thread safety */
 		synchronized (WordCounterServiceImpl.class) {
 			wordList.addAll(validValues);
 		}
-
+		/* Incase any word is not valid */
 		if (validValues.size() < word.getValueList().size())
 			return Constants.partialSuccess;
 
