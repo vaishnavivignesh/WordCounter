@@ -20,7 +20,7 @@ public class WordCountercontroller {
 	@Autowired
 	WordCounterService wordCounterService;
 
-	@PostMapping("/word")
+	@PostMapping("/addword")
 	public ResponseEntity<Response> addWord(@RequestBody Word word) {
 
 		String status = wordCounterService.addWord(word);
