@@ -20,8 +20,8 @@ public class ValidationService {
 	public List<String> validateInput(Word word) {
 
 		List<String> validValues = filterOnlyAlphabet(word);
-
-		return translator.getEnglishWord(validValues);
+ /* Assuming there is an external class for translator */
+  		return translator.getEnglishWord(validValues);
 	}
 
 	public List<String> filterOnlyAlphabet(Word word) {
