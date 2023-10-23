@@ -1,64 +1,72 @@
 
 package com.sample.wordcounter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 
-import com.sample.wordcounter.model.Response;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sample.wordcounter.model.Word;
 
 @SpringBootTest(classes = WordcounterApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 class WordcounterApplicationTests {
 
-	@LocalServerPort
-	private int port;
+	@Autowired
+	private MockMvc mockMvc;
 
 	@Autowired
-	private TestRestTemplate restTemplate;
+	private ObjectMapper objectMapper;
 
 	@Test
-	public void successTestWordCounter() {
+
+	public void testWordCountermocksuccess() throws JsonProcessingException, Exception {
 		Word word = new Word("Edinburgh Cambridge", Arrays.asList("London", "Glasgow"));
 
-		HttpHeaders requestHeaders = new HttpHeaders();
-		requestHeaders.add(HttpHeaders.CONTENT_TYPE, "application/json");
+		mockMvc.perform(MockMvcRequestBuilders.post("/addword").content(objectMapper.writeValueAsString(word))
+				.contentType("application/json").accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk());
 
-		ResponseEntity<Response> responseEntity = this.restTemplate.postForEntity("http://localhost:" + port + "/word",
-				word, Response.class);
-		assertEquals(200, responseEntity.getStatusCodeValue());
 	}
+	
+	@Test
+
+	public void testWordCountermockpartial() throws JsonProcessingException, Exception {
+		Word word = new Word("Edin1burgh Cambridge", Arrays.asList("London", "Glasgow"));
+		mockMvc.perform(MockMvcRequestBuilders.post("/addword").content(objectMapper.writeValueAsString(word))
+				.contentType("application/json").accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isPartialContent());
+
+	}
+	
+	@Test
+
+	public void testWordCountermockfailure() throws JsonProcessingException, Exception {
+		Word word = new Word("Edin1burgh Camb677ridge", Arrays.asList("Lo7777ndon", "Gla777sgow"));
+		mockMvc.perform(MockMvcRequestBuilders.post("/addword").content(objectMapper.writeValueAsString(word))
+				.contentType("application/json").accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+	}
+
 
 	@Test
-	public void partialSuccessTestWordCounter() {
-		Word word = new Word("Edinburgh Ca1mbridge", Arrays.asList("Lo1ndon", "Glasgow"));
 
-		HttpHeaders requestHeaders = new HttpHeaders();
-		requestHeaders.add(HttpHeaders.CONTENT_TYPE, "application/json");
-
-		ResponseEntity<Response> responseEntity = this.restTemplate.postForEntity("http://localhost:" + port + "/word",
-				word, Response.class);
-		assertEquals(200, responseEntity.getStatusCodeValue());
+	public void searchwordTest() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/word/newword").accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
-	@Test
-	public void failTestWordCounter() {
-		Word word = new Word("Edin1burgh Cam2bridge", Arrays.asList("Lo3ndon", "Gla4sgow"));
-
-		HttpHeaders requestHeaders = new HttpHeaders();
-		requestHeaders.add(HttpHeaders.CONTENT_TYPE, "application/json");
-
-		ResponseEntity<Response> responseEntity = this.restTemplate.postForEntity("http://localhost:" + port + "/word",
-				word, Response.class);
-		assertEquals(200, responseEntity.getStatusCodeValue());
-	}
 }
