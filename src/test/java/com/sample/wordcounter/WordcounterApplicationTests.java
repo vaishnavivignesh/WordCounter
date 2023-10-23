@@ -64,9 +64,16 @@ class WordcounterApplicationTests {
 
 	@Test
 
-	public void searchwordTest() throws Exception {
+	public void searchwordnotfoundTest() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/word/newword").accept(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isOk());
+				.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$").value(0));
+	}
+	
+	@Test
+
+	public void searchwordfoundTest() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/word/London").accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$").value(2));
 	}
 
 }
