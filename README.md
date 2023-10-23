@@ -4,6 +4,8 @@ Library to add and count
 
 This library accept multiple strings in both list and string format(separated by spaces).
 
+Code can be further enhanced with Global exception handling with a controller Advice.
+
 
 Sample Request and Response
 ---------------------------
