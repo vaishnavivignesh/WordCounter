@@ -18,6 +18,6 @@ curl --location 'http://localhost:8080/addword' \
 }'
 
 
-Response
+search a word returns the count of the word if available in the list of words  added.
 
 curl --location 'http://localhost:8080/word/edinburgh'
